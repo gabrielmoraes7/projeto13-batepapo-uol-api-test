@@ -10,10 +10,8 @@ import { stripHtml } from 'string-strip-html';
 
 //conexão local ao banco de dados Mongo pela variavel local no dotenv
 dotenv.config();
-const app = express();
-const port = 5000;
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
-
+const app = express();
 
 //formato dos objetos das mensagens a serem guardadas/exibidas
 const messageSchema = joi.object({
@@ -38,7 +36,7 @@ async function start() {
     } catch (err) {
         console.log(chalk.bold.red(err.message));
     }
-}   
+}
 
 const db = mongoClient.db();
 
