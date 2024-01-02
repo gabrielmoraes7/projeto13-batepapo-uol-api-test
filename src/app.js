@@ -84,11 +84,52 @@ app.post('/participants', async (req, res) => {
 //rota get /participants
 app.get('/participants', async (req, res) => {
     try {
-        const participants = await db.collection('participants').find().toArray();
-        return res.status(200).send(participants);
+        const participants = await db.collection('participantws').find().toArray();
+            return res.status(200).send(participants);
     } catch (error) {
         return res.status(500).send(error.message);
     } 
+});
+
+//rota post /messages - Salvar as mensagens
+app.post('/messages', async (req, res) => {
+
+    const { to, text, type } = req.body;
+    const user = req.headers.user == undefined ? '' : Buffer.from(req.headers['user'], 'latin1').toString('utf-8');
+    
+    if (user === '') {
+        return res.sendStatus(422);
+    }
+
+    try {
+        const userLoggedIn = await db.collection('participants').findOne({ name: user });
+
+        if (!userLoggedIn) {
+            return res.sendStatus(422);
+        }
+    } catch (error) {
+        return res.status(500).send(error.message);
+    } 
+
+    const validacao = messageSchema.validate(req.body, { abortEarly: false });
+
+    if (validacao.error) {
+        const errors = validacao.error.details.map((detail) => detail.message);
+        return res.status(422).send(errors);
+    }
+
+    try {
+        await db.collection('messages').insertOne({
+            from: user,
+            to: stripHtml(to).result.trim(),
+            text: stripHtml(text).result.trim(),
+            type: stripHtml(type).result.trim(),
+            time: dayjs().format('HH:mm:ss')
+        });
+        return res.sendStatus(201);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
 });
 
 app.listen(port, () => {
