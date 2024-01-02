@@ -1,5 +1,5 @@
 //importação das bibliotecas utilizadas
-import { MongoClient, MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 import express, {json} from 'express';
 import dayjs from 'dayjs';
 import chalk from 'chalk';
@@ -13,6 +13,8 @@ dotenv.config();
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
 const app = express();
 const port = 5000; //porta onde vai ser hosteado o servidor local
+app.use(cors());
+app.use(json());
 
 //formato dos objetos das mensagens a serem guardadas/exibidas
 const messageSchema = joi.object({
@@ -24,12 +26,8 @@ const messageSchema = joi.object({
 start();
 async function start() {
 
-    app.use(cors());
-    app.use(json());
-
-    app.listen(port, () => {
-        console.log(`Server listening at http://localhost:${port}`);
-    });
+    
+    
 
     try {
         await mongoClient.connect();
