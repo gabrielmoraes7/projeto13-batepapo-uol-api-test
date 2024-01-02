@@ -1,5 +1,5 @@
 //importação das bibliotecas utilizadas
-import { mongoClient, MongoClient, ObjectId } from 'mongodb';
+import { MongoClient, MongoClient, ObjectId } from 'mongodb';
 import express, {json} from 'express';
 import dayjs from 'dayjs';
 import chalk from 'chalk';
@@ -10,8 +10,10 @@ import { stripHtml } from 'string-strip-html';
 
 //conexão local ao banco de dados Mongo pela variavel local no dotenv
 dotenv.config();
-const MongoClient = new MongoClient(process.env.DATABASE_URL);
 const app = express();
+const port = 5000;
+const mongoClient = new MongoClient(process.env.DATABASE_URL);
+
 
 //formato dos objetos das mensagens a serem guardadas/exibidas
 const messageSchema = joi.object({
@@ -36,7 +38,7 @@ async function start() {
     } catch (err) {
         console.log(chalk.bold.red(err.message));
     }
-}
+}   
 
 const db = mongoClient.db();
 
@@ -96,3 +98,16 @@ app.post('/participants', async (req, res) => {
     
 });  
 
+//rota get /participants
+app.get('/participants', async (req, res) => {
+    try {
+        const participants = await db.collection('participants').find().toArray();
+        return res.status(200).send(participants);
+    } catch (error) {
+        return res.status(500).send(error.message);
+    } 
+});
+
+app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
+});
