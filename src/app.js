@@ -12,6 +12,7 @@ import { stripHtml } from 'string-strip-html';
 dotenv.config();
 const mongoClient = new MongoClient(process.env.DATABASE_URL);
 const app = express();
+const port = 5000; //porta onde vai ser hosteado o servidor local
 
 //formato dos objetos das mensagens a serem guardadas/exibidas
 const messageSchema = joi.object({
@@ -26,8 +27,8 @@ async function start() {
     app.use(cors());
     app.use(json());
 
-    app.listen(process.env.PORT, () => {
-        console.log(`Conexão feita na porta: ${process.env.PORT}`);
+    app.listen(port, () => {
+        console.log(`Server listening at http://localhost:${port}`);
     });
 
     try {
