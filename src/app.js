@@ -170,12 +170,38 @@ app.post('/status', async (req, res) => {
     if (!participantExists) {
         return res.sendStatus(404);
     }
+
     await participantsCollection.updateOne(
         { name: user },
         { $set: { lastStatus: Date.now() } }
     );
     res.sendStatus(200);
 });
+
+setInterval(async () => {
+    try {
+        const participants = await db.collection('participants').find({ lastStatus: { $lte: Date.now() - 10000 } }).toArray();
+
+        participants.forEach(async (participant) => {
+
+            await db.collection('messages').insertOne({
+                from: participant.name,
+                to: 'Todos',
+                text: `sai da sala...`,
+                type: 'status',
+                time: dayjs().format('HH:mm:ss'),
+            });
+
+            db.collection('participants').deleteOne({
+                name: participant.name,
+            });
+        });
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}, 15000);
+
 
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
