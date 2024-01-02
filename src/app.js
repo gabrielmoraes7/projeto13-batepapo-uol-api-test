@@ -80,7 +80,7 @@ app.post('/participants', async (req, res) => {
     }
     
 });  
-
+ 
 //rota get /participants
 app.get('/participants', async (req, res) => {
     try {
@@ -154,6 +154,27 @@ app.get('/messages', async (req, res) => {
     } catch (error) {
         return res.status(500).send(error.message);
     }
+});
+
+//requisição de Status - POST
+app.post('/status', async (req, res) => {
+    const user = req.headers.user;
+    if (!user) {
+        return res.sendStatus(404);
+    }
+
+    const db = mongoClient.db();
+    const participantsCollection = db.collection('participants');
+    const participantExists = await participantsCollection.findOne({ name: user });
+    
+    if (!participantExists) {
+        return res.sendStatus(404);
+    }
+    await participantsCollection.updateOne(
+        { name: user },
+        { $set: { lastStatus: Date.now() } }
+    );
+    res.sendStatus(200);
 });
 
 app.listen(port, () => {
