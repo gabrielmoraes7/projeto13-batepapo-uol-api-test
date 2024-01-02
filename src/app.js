@@ -132,6 +132,30 @@ app.post('/messages', async (req, res) => {
     }
 });
 
+//requisição de Mensagens - GET
+app.get('/messages', async (req, res) => {
+    try {
+        const { limit } = req.query;
+        const user = Buffer.from(req.headers['user'], 'latin1').toString('utf-8');
+        if (limit) {
+
+            if (isNaN(limit) || (!isNaN(limit) && limit <= 0)) return res.sendStatus(422);
+
+            const dbMessages = await db.collection('messages')
+                .find({ $or: [{ to: 'Todos' }, { to: user }, { from: user }, { type: 'message' },], }).toArray();
+                return res.send([...dbMessages].reverse().slice(0, limit).reverse());
+        } else {
+            console.log(chalk.bold.green(`User ${user} has requested all messages`));
+            const dbMessages = await db.collection('messages')
+                .find({ $or: [{ to: 'Todos' }, { to: user }, { from: user }] }).toArray();
+
+                return res.send([...dbMessages]);
+        }
+    } catch (error) {
+        return res.status(500).send(error.message);
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server listening at http://localhost:${port}`);
 });
