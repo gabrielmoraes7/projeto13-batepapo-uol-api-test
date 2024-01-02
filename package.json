@@ -1,17 +1,21 @@
 {
   "name": "projeto13-batepapo-uol-api",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "main": "app.js",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "start": "node ./src/app.js"
   },
   "dependencies": {
+    "chalk": "^5.3.0",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.10",
+    "dotenv": "^16.3.1",
+    "joi": "^17.11.0",
+    "mongodb": "^6.3.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "string-strip-html": "^13.4.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
