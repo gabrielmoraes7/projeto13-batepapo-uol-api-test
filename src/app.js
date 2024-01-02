@@ -84,7 +84,7 @@ app.post('/participants', async (req, res) => {
 //rota get /participants
 app.get('/participants', async (req, res) => {
     try {
-        const participants = await db.collection('participantws').find().toArray();
+        const participants = await db.collection('participants').find().toArray();
             return res.status(200).send(participants);
     } catch (error) {
         return res.status(500).send(error.message);
@@ -111,10 +111,10 @@ app.post('/messages', async (req, res) => {
         return res.status(500).send(error.message);
     } 
 
-    const validacao = messageSchema.validate(req.body, { abortEarly: false });
+    const validation = messageSchema.validate(req.body, { abortEarly: false });
 
-    if (validacao.error) {
-        const errors = validacao.error.details.map((detail) => detail.message);
+    if (validation.error) {
+        const errors = validation.error.details.map((detail) => detail.message);
         return res.status(422).send(errors);
     }
 
